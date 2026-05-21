@@ -1,0 +1,15 @@
+# .gitignore
+
+# Virtual environment
+.venv/
+venv/
+ENV/
+
+# Python cache artifacts
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment variables / secrets
+.env

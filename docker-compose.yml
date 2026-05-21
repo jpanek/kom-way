@@ -1,0 +1,32 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: kom-way-db
+    restart: always
+    environment:
+      POSTGRES_USER: kom_way_admin
+      POSTGRES_PASSWORD: kjkj
+      POSTGRES_DB: kom_way_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  web:
+    build: .
+    container_name: kom-way-app
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/code/app
+    environment:
+      - DATABASE_URL=postgresql://kom_way_admin:kjkj@db:5432/kom_way_db
+    depends_on:
+      - db
+
+volumes:
+  pgdata:

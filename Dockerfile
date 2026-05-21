@@ -1,0 +1,15 @@
+# Dockerfile
+FROM python:3.11-slim
+
+WORKDIR /code
+
+ENV PYTHONTONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Clean, simple copy and install without heavy compilation tools
+COPY ./requirements.txt /code/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+
+COPY ./app /code/app
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
