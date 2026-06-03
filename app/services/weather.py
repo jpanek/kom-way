@@ -74,10 +74,12 @@ async def process_weather_request(request: WeatherRequest) -> WeatherResponse:
     wind = get_wind_direction(current_data.get("wind_direction_10m", 0))
 
     
-    next_rain = sum_numeric_values(data.get("minutely_15", {}).get("precipitation", []))
-    next_gust = data.get("minutely_15", {}).get("wind_gusts_10m",[])
+    #next_rain = sum_numeric_values(data.get("minutely_15", {}).get("precipitation", []))
+    next_rain = data.get("minutely_15", {}).get("precipitation", [])
+    #next_gust = data.get("minutely_15", {}).get("wind_gusts_10m",[])
 
-    print(json.dumps(wind, indent=4))
+    print("data dump:")
+    print(json.dumps(data, indent=4))
 
     
     return WeatherResponse(
