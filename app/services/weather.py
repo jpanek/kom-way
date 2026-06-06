@@ -1,6 +1,7 @@
 # app/services/weather.py
 import os, json
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 import httpx
 from fastapi import HTTPException
 from app.schemas.weather_schema import WeatherRequest, WeatherResponse
@@ -67,9 +68,19 @@ async def process_weather_request(request: WeatherRequest) -> WeatherResponse:
             print(f"--> [Error] Network issue connecting to Open-Meteo: {exc}")
             raise HTTPException(status_code=503, detail="Open-Meteo weather service is unreachable")
 
+    #current_data = data.get("current", {})
+    #api_time_str = current_data.get("time")
+    #api_time = datetime.fromisoformat(api_time_str).replace(tzinfo=timezone.utc)
+
     current_data = data.get("current", {})
     api_time_str = current_data.get("time")
-    api_time = datetime.fromisoformat(api_time_str).replace(tzinfo=timezone.utc)
+    api_tz_name = data.get("timezone", "UTC")
+
+    api_time_local = datetime.fromisoformat(api_time_str).replace(
+        tzinfo=ZoneInfo(api_tz_name)
+    )
+    api_time = api_time_local.astimezone(timezone.utc)
+    api_time_unix = int(api_time.timestamp())
 
     wind = get_wind_direction(current_data.get("wind_direction_10m", 0))
 
@@ -78,8 +89,8 @@ async def process_weather_request(request: WeatherRequest) -> WeatherResponse:
     next_rain = data.get("minutely_15", {}).get("precipitation", [])
     #next_gust = data.get("minutely_15", {}).get("wind_gusts_10m",[])
 
-    print("data dump:")
-    print(json.dumps(data, indent=4))
+    #print("data dump:")
+    #print(json.dumps(data, indent=4))
 
     
     return WeatherResponse(
@@ -87,7 +98,8 @@ async def process_weather_request(request: WeatherRequest) -> WeatherResponse:
         lat=data.get("latitude", request.latitude),
         lon=data.get("longitude", request.longitude),
         time=api_time,
-        interval = current_data.get("interval", request.longitude),
+        time_unix=api_time_unix,
+        interval = current_data.get("interval", 900),
         timezone = data.get("timezone"),
         timezone_code=data.get("timezone_abbreviation", "UTC"),
         wind_speed_kmh=current_data.get("wind_speed_10m", 0.0),

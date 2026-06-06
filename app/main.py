@@ -38,9 +38,11 @@ async def receive_garmin_weather(request: WeatherRequest):
 
     return GarminWeatherResponse(
         t=int(full_weather.time.timestamp()),
+        int=full_weather.interval,
         ws=full_weather.wind_speed_kmh,
         wg=full_weather.wind_gust_kmh,
-        wd=full_weather.wind_deg_rounded,
+        wd=full_weather.wind_deg,
+        wdr=full_weather.wind_deg_rounded,
         temp=full_weather.temp_celsius,
         rain=full_weather.next_rain_total
     )

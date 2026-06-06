@@ -14,6 +14,7 @@ class WeatherResponse(BaseModel):
     lat: float
     lon: float
     time: datetime
+    time_unix:int
     timezone: str
     timezone_code: str
     interval: float
@@ -62,9 +63,11 @@ class WeatherResponse(BaseModel):
         return None
     
 class GarminWeatherResponse(BaseModel):
-    t: int          # time
+    t: int          # unix timestamp
+    int: int
     ws: float           # wind_speed_kmh
     wg: float           # wind_gust_kmh
-    wd: float           # wind_deg_rounded
+    wd: float           # wind_deg
+    wdr: float           # wind_deg_rounded
     temp: float         # temp_celsius
     rain: float         # next_rain_total
