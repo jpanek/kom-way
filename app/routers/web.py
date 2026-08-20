@@ -1,11 +1,15 @@
 # app/routers/web.py
 
-from fastapi import APIRouter
-from fastapi.responses import HTMLResponse
+from fastapi import Request, APIRouter
+from fastapi.templating import Jinja2Templates
 
 router = APIRouter()
+templates = Jinja2Templates(directory="app/templates")
 
-@router.get("/privacy", response_class=HTMLResponse)
-async def privacy_policy():
-    with open("app/static/privacy.html", "r") as f:
-        return f.read()
+@router.get("/")
+async def home(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+@router.get("/privacy")
+async def privacy_policy(request: Request):
+    return templates.TemplateResponse("privacy.html", {"request": request})
