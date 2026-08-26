@@ -22,9 +22,9 @@ async def privacy_policy(request: Request):
 
 @router.get("/status")
 async def status_dashboard(request: Request, key: str = None):
-    # Lock down the route unless the correct secret key is passed in the URL
     if key != STATUS_SECRET_KEY:
-        raise HTTPException(status_code=404, detail="Not found")  # Returns a 404 so it looks like it doesn't exist
+        raise HTTPException(status_code=404, detail="Not found")
+
     logs = []
     status_counts = Counter()
     ip_counts = Counter()
@@ -37,13 +37,18 @@ async def status_dashboard(request: Request, key: str = None):
                     if not entry:
                         continue
                     
-                    # [SAFE FALLBACKS for old log formats]
                     if "time_local" not in entry:
                         entry["time_local"] = entry.get("time", "N/A")
                     if "status" not in entry:
                         entry["status"] = 200
                     if "ip" not in entry:
                         entry["ip"] = "unknown"
+                    if "duration_ms" not in entry:
+                        entry["duration_ms"] = 0.0
+                    if "in" not in entry or not isinstance(entry["in"], dict):
+                        entry["in"] = {"latitude": 0.0, "longitude": 0.0}
+                    if "out" not in entry or not isinstance(entry["out"], dict):
+                        entry["out"] = {"ws": 0.0, "temp": 0.0}
 
                     status_counts[entry["status"]] += 1
                     ip_counts[entry["ip"]] += 1
@@ -52,7 +57,7 @@ async def status_dashboard(request: Request, key: str = None):
                 except (json.JSONDecodeError, ValueError):
                     pass
 
-    logs.reverse()  # Newest first
+    logs.reverse()
 
     return templates.TemplateResponse(
         "status.html", 
@@ -60,6 +65,6 @@ async def status_dashboard(request: Request, key: str = None):
             "request": request, 
             "logs": logs,
             "status_counts": dict(status_counts.most_common()),
-            "ip_counts": dict(ip_counts.most_common())
+            "unique_ip_count": len(ip_counts)  # [MODIFIED] Pass unique count instead of full dict
         }
     )

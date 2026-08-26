@@ -39,30 +39,23 @@
             </table>
         </div>
 
-        <!-- Unique IPs Summary -->
-        <div style="flex: 1; min-width: 220px;">
-            <h4 style="font-size: 0.95rem; margin-bottom: 0.4rem; opacity: 0.8;">Unique IPs & Requests</h4>
-            <table class="striped" style="font-size: 0.85rem; margin-bottom: 0;">
-                <thead>
-                    <tr>
-                        <th style="padding: 4px 8px;">Client IP</th>
-                        <th style="padding: 4px 8px;">Count</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for ip, count in ip_counts.items() %}
-                    <tr>
-                        <td style="padding: 4px 8px;">{{ ip }}</td>
-                        <td style="padding: 4px 8px;">{{ count }}</td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="2" style="text-align: center; opacity: 0.6; padding: 6px;">No data</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+    <!-- Unique IPs Summary -->
+    <div style="flex: 1; min-width: 220px;">
+        <h4 style="font-size: 0.95rem; margin-bottom: 0.4rem; opacity: 0.8;">Unique IPs</h4>
+        <table class="striped" style="font-size: 0.85rem; margin-bottom: 0;">
+            <thead>
+                <tr>
+                    <th style="padding: 4px 8px;">Metric</th>
+                    <th style="padding: 4px 8px;">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding: 4px 8px;">Unique Visitors</td>
+                    <td style="padding: 4px 8px;">{{ unique_ip_count }}</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
     <!-- Main Traffic Log Table -->
