@@ -13,3 +13,6 @@ ENV/
 
 # Environment variables / secrets
 .env
+
+#logs
+app/log/
