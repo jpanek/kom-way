@@ -86,7 +86,7 @@
                     <td style="color: {{ 'var(--pico-del-color)' if entry.duration_ms > 500 else 'var(--pico-ins-color)' }};">
                         {{ entry.duration_ms }} ms
                     </td>
-                    <td>{{ "%.4f"|format(entry.in.latitude) }}, {{ "%.4f"|format(entry.in.longitude) }}</td>
+                    <td>{{ "%.2f"|format(entry.in.latitude) }}, {{ "%.2f"|format(entry.in.longitude) }}</td>
                     <td>{{ entry.out.ws }} km/h</td>
                     <td>{{ entry.out.temp }} &deg;C</td>
                 </tr>
