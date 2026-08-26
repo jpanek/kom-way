@@ -1,5 +1,8 @@
 # .gitignore
 
+#docker container definitions
+docker-compose.yml
+
 # Virtual environment
 .venv/
 venv/
