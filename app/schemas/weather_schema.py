@@ -4,10 +4,11 @@ from datetime import datetime
 
 # --- Input Models ---
 class WeatherRequest(BaseModel):
-    #latitude: float = Field(default=50.103)
-    #longitude: float = Field(default=14.403)
+
     latitude: float = Field(default=50.103, validation_alias=AliasChoices('latitude', 'lat'))
     longitude: float = Field(default=14.403, validation_alias=AliasChoices('longitude', 'lon'))
+    #latitude: float = Field(validation_alias=AliasChoices('latitude', 'lat'))
+    #longitude: float = Field(validation_alias=AliasChoices('longitude', 'lon'))
 
 # --- Output Models ---
 

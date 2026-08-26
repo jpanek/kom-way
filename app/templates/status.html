@@ -1,0 +1,111 @@
+<!-- templates/status.html -->
+
+{% extends "base.html" %}
+
+{% block title %}Traffic Monitor{% endblock %}
+
+{% block content %}
+<meta http-equiv="refresh" content="10">
+<div style="font-size: 0.7rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h2 style="margin-bottom: 0; font-size: 1.4rem;">Kom-Way Traffic Monitor</h2>
+        <small style="opacity: 0.7;">Auto-refreshes every 10s</small>
+    </div>
+
+    <!-- [NEW] Side-by-side summary tables -->
+    <div style="display: flex; gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+        <!-- Status Code Summary -->
+        <div style="flex: 1; min-width: 220px;">
+            <h4 style="font-size: 0.95rem; margin-bottom: 0.4rem; opacity: 0.8;">Response Codes</h4>
+            <table class="striped" style="font-size: 0.85rem; margin-bottom: 0;">
+                <thead>
+                    <tr>
+                        <th style="padding: 4px 8px;">Status</th>
+                        <th style="padding: 4px 8px;">Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for status, count in status_counts.items() %}
+                    <tr>
+                        <td style="padding: 4px 8px;">{{ status }}</td>
+                        <td style="padding: 4px 8px;">{{ count }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="2" style="text-align: center; opacity: 0.6; padding: 6px;">No data</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Unique IPs Summary -->
+        <div style="flex: 1; min-width: 220px;">
+            <h4 style="font-size: 0.95rem; margin-bottom: 0.4rem; opacity: 0.8;">Unique IPs & Requests</h4>
+            <table class="striped" style="font-size: 0.85rem; margin-bottom: 0;">
+                <thead>
+                    <tr>
+                        <th style="padding: 4px 8px;">Client IP</th>
+                        <th style="padding: 4px 8px;">Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ip, count in ip_counts.items() %}
+                    <tr>
+                        <td style="padding: 4px 8px;">{{ ip }}</td>
+                        <td style="padding: 4px 8px;">{{ count }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="2" style="text-align: center; opacity: 0.6; padding: 6px;">No data</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Main Traffic Log Table -->
+    <div class="overflow-auto">
+        <stripe-table>
+        <table class="striped">
+            <thead>
+                <tr>
+                    <th>Time Local</th>
+                    <th>Client IP</th>
+                    <th>Status</th>
+                    <th>Duration</th>
+                    <th>Lat / Lon</th>
+                    <th>Wind Speed</th>
+                    <th>Temperature</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in logs %}
+                <tr>
+                    <td>{{ entry.time_local }}</td>
+                    <td>{{ entry.ip }}</td>
+                    <td>
+                        <mark style="padding: 2px 6px; background-color: {{ 'var(--pico-ins-color)' if entry.status == 200 else 'var(--pico-del-color)' }}; color: #000; border-radius: 4px;">
+                            {{ entry.status }}
+                        </mark>
+                    </td>
+                    <td style="color: {{ 'var(--pico-del-color)' if entry.duration_ms > 500 else 'var(--pico-ins-color)' }};">
+                        {{ entry.duration_ms }} ms
+                    </td>
+                    <td>{{ "%.4f"|format(entry.in.latitude) }}, {{ "%.4f"|format(entry.in.longitude) }}</td>
+                    <td>{{ entry.out.ws }} km/h</td>
+                    <td>{{ entry.out.temp }} &deg;C</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" style="text-align: center; opacity: 0.6;">No traffic logged yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+{% endblock %}
