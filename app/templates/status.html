@@ -86,7 +86,11 @@
                     <td style="color: {{ 'var(--pico-del-color)' if entry.duration_ms > 500 else 'var(--pico-ins-color)' }};">
                         {{ entry.duration_ms }} ms
                     </td>
-                    <td>{{ "%.2f"|format(entry.in.latitude) }}, {{ "%.2f"|format(entry.in.longitude) }}</td>
+                    <td>
+                        <a href="https://www.google.com/maps/search/?api=1&query={{ entry.in.latitude }},{{ entry.in.longitude }}" target="_blank" rel="noopener noreferrer">
+                            {{ "%.2f"|format(entry.in.latitude) }}, {{ "%.2f"|format(entry.in.longitude) }}
+                        </a>
+                    </td>
                     <td>{{ entry.out.ws }} km/h</td>
                     <td>{{ entry.out.temp }} &deg;C</td>
                 </tr>
