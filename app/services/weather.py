@@ -7,7 +7,9 @@ from fastapi import HTTPException
 from app.schemas.weather_schema import WeatherRequest, WeatherResponse
 
 # Limit concurrent outbound calls to Open-Meteo to prevent burst 429 rate limits
-weather_semaphore = asyncio.Semaphore(2)
+
+semaphore_limit = 5
+weather_semaphore = asyncio.Semaphore(semaphore_limit)
 
 async def process_weather_request(request: WeatherRequest) -> WeatherResponse:
     print(f"--> [Service] Processing weather for coordinates: {request.latitude}, {request.longitude}")
