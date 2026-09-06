@@ -13,6 +13,8 @@ from zoneinfo import ZoneInfo
 from datetime import datetime, timezone
 from pathlib import Path
 
+import random 
+
 # put garmin_debug.log right inside the app/ directory regardless of where uvicorn is launched
 LOG_FILE = Path(__file__).parent.parent / "log" / "garmin_debug.log"
 LOCAL_TZ = ZoneInfo("Europe/Prague")
@@ -53,9 +55,12 @@ async def receive_garmin_weather(request: WeatherRequest, http_req: Request, res
 
     duration_ms = round((time.perf_counter() - start_time) * 1000, 2)
 
+    base_interval = full_weather.interval
+    modified_interval = base_interval + random.randint(5, 30) #will adjust alter
+
     response_data = GarminWeatherResponse(
         t=full_weather.time_unix,
-        int=full_weather.interval,
+        int=modified_interval,
         ws=full_weather.wind_speed_kmh,
         wg=full_weather.wind_gust_kmh,
         wd=full_weather.wind_deg,
@@ -80,8 +85,15 @@ async def receive_garmin_weather(request: WeatherRequest, http_req: Request, res
             duration_ms=duration_ms,
             latitude=request.latitude,
             longitude=request.longitude,
+            weather_time=response_data.t,
+            weather_interval=base_interval,
+            weather_interval_mod=modified_interval,
             ws=response_data.ws,
-            temp=response_data.temp
+            wg=response_data.wg,
+            wd=response_data.wd,
+            wdr=response_data.wdr,
+            temp=response_data.temp,
+            rain=response_data.rain
         )
     except Exception as e:
         print(f"Failed to insert API log into DB: {e}")

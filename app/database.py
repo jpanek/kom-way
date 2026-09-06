@@ -17,14 +17,20 @@ def get_db_connection():
     """
     return psycopg.connect(DATABASE_URL, row_factory=dict_row)
 
-def insert_api_log(time_local, status, ip, duration_ms, latitude, longitude, ws, temp):
+def insert_api_log(time_local, status, ip, duration_ms, latitude, longitude, weather_time, weather_interval, weather_interval_mod, ws, wg, wd, wdr, temp, rain):
     """Inserts a request log entry into the database."""
     with get_db_connection() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                INSERT INTO api_logs (time_local, status, ip, duration_ms, latitude, longitude, ws, temp)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-            """, (time_local, status, ip, duration_ms, latitude, longitude, ws, temp))
+                INSERT INTO api_logs (
+                    time_local, status, ip, duration_ms, latitude, longitude, 
+                    weather_time, weather_interval, weather_interval_mod, ws, wg, wd, wdr, temp, rain
+                )
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (
+                time_local, status, ip, duration_ms, latitude, longitude, 
+                weather_time, weather_interval, weather_interval_mod, ws, wg, wd, wdr, temp, rain
+            ))
             conn.commit()
 
 def get_api_logs(days: int = 30):
@@ -32,7 +38,7 @@ def get_api_logs(days: int = 30):
     with get_db_connection() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                SELECT id, time_local, status, ip, duration_ms, latitude, longitude, ws, temp, created_at
+                SELECT id, time_local, weather_interval_mod, status, ip, duration_ms, latitude, longitude, ws, temp, created_at
                 FROM api_logs
                 WHERE created_at >= NOW() - INTERVAL '1 day' * %s
                 ORDER BY created_at DESC;

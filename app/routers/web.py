@@ -14,7 +14,7 @@ LOG_HISTORY_DAYS = 3
 log_lines = 300
 
 LOGS_QUERY = """
-    SELECT time_local, status, ip, duration_ms, latitude, longitude, ws, temp
+    SELECT time_local, weather_interval_mod, status, ip, duration_ms, latitude, longitude, ws, temp
     FROM api_logs
     WHERE created_at >= NOW() - INTERVAL '1 day' * %s
     ORDER BY created_at DESC
