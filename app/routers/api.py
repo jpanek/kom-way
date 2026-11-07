@@ -3,7 +3,7 @@
 from fastapi import APIRouter, Request, Response
 from app.schemas.weather_schema import WeatherRequest, WeatherResponse, GarminWeatherResponse
 from app.services.weather import process_weather_request
-from app.database import insert_api_log
+from app.database import insert_api_log, delete_old_api_logs
 
 
 router = APIRouter(prefix="/api/v1")
@@ -85,6 +85,7 @@ async def receive_garmin_weather(request: WeatherRequest, http_req: Request, res
             duration_ms=duration_ms,
             latitude=request.latitude,
             longitude=request.longitude,
+            device_id=request.device_id,
             weather_time=response_data.t,
             weather_interval=base_interval,
             weather_interval_mod=modified_interval,
@@ -95,6 +96,8 @@ async def receive_garmin_weather(request: WeatherRequest, http_req: Request, res
             temp=response_data.temp,
             rain=response_data.rain
         )
+
+        delete_old_api_logs(30)
     except Exception as e:
         print(f"Failed to insert API log into DB: {e}")
 

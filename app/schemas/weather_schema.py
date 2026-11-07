@@ -9,6 +9,7 @@ class WeatherRequest(BaseModel):
     #longitude: float = Field(default=14.403, validation_alias=AliasChoices('longitude', 'lon'))
     latitude: float = Field(validation_alias=AliasChoices('latitude', 'lat'))
     longitude: float = Field(validation_alias=AliasChoices('longitude', 'lon'))
+    device_id: str | None = -1
 
 # --- Output Models ---
 

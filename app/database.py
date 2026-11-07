@@ -17,20 +17,31 @@ def get_db_connection():
     """
     return psycopg.connect(DATABASE_URL, row_factory=dict_row)
 
-def insert_api_log(time_local, status, ip, duration_ms, latitude, longitude, weather_time, weather_interval, weather_interval_mod, ws, wg, wd, wdr, temp, rain):
+def insert_api_log(time_local, status, ip, duration_ms, latitude, longitude, device_id, weather_time, weather_interval, weather_interval_mod, ws, wg, wd, wdr, temp, rain):
     """Inserts a request log entry into the database."""
     with get_db_connection() as conn:
         with conn.cursor() as cur:
             cur.execute("""
                 INSERT INTO api_logs (
-                    time_local, status, ip, duration_ms, latitude, longitude, 
+                    time_local, status, ip, duration_ms, latitude, longitude, device_id, 
                     weather_time, weather_interval, weather_interval_mod, ws, wg, wd, wdr, temp, rain
                 )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """, (
-                time_local, status, ip, duration_ms, latitude, longitude, 
+                time_local, status, ip, duration_ms, latitude, longitude, device_id,  
                 weather_time, weather_interval, weather_interval_mod, ws, wg, wd, wdr, temp, rain
             ))
+            conn.commit()
+
+def delete_old_api_logs(days=30):
+    """Deletes API log entries older than the specified number of days."""
+
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                DELETE FROM api_logs
+                WHERE created_at < NOW() - make_interval(days => %s)
+            """, (days,))
             conn.commit()
 
 def get_api_logs(days: int = 30):
