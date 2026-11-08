@@ -14,7 +14,9 @@ from dotenv import load_dotenv
 # --------------------------------------------------
 
 BASE_DIR = Path(__file__).resolve().parent
-load_dotenv(BASE_DIR / ".env")
+APP_DIR = BASE_DIR.parent
+
+load_dotenv(APP_DIR / ".env")
 
 API_URL = "https://kom-way.cyclingdatahub.com/api/v1/full-weather"
 STATE_FILE = BASE_DIR / "api_status.txt"
@@ -79,8 +81,8 @@ def send_email(subject, body):
 
 def check_api():
     payload = {
-        "latitude": 0,
-        "longitude": 0,
+        "latitude": 50.1,
+        "longitude": 14.4,
         "device_id": "-1",
     }
 
@@ -119,7 +121,6 @@ def main():
     )
 
     is_up, details = check_api()
-    is_up = False
     current_state = "UP" if is_up else "DOWN"
 
     print(
